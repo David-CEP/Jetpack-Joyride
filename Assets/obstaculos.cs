@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class obstaculos : MonoBehaviour
 {
+    public TMP_Text score;
+    public int scoreInt = 0;
+
     private void Start()
     {
         gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, Random.Range(3f, 7f), gameObject.transform.localScale.z);
@@ -28,6 +32,12 @@ public class obstaculos : MonoBehaviour
             tempRot.z = Random.Range(-50f, -50f);
             gameObject.transform.localRotation = tempRot;
             gameObject.SetActive(true);
+        }
+
+        if(collision.gameObject.tag == "Score")
+        {
+            scoreInt++;
+            score.text = scoreInt.ToString();
         }
     }
 }

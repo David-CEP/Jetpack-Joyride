@@ -16,7 +16,7 @@ public class jugador : MonoBehaviour
     {
         string tempHighScore = File.ReadAllText(Application.dataPath + "/scoreSaver.json");
         scoreObj highScoreCheck = JsonUtility.FromJson<scoreObj>(tempHighScore);
-        highScore.text = highScoreCheck.score;   
+        highScore.text = "12";   
     }
 
     void Update()

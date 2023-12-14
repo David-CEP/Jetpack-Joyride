@@ -5,4 +5,5 @@ using UnityEngine;
 public class scoreObj
 {
     public string score;
+    public string coins;
 }

@@ -7,6 +7,13 @@ public class obstaculos : MonoBehaviour
 {
     public TMP_Text score;
     public int scoreInt = 0;
+    public int hitCounterCoin = 0;
+    public int hitCounterPower = 0;
+    public coin coinObj;
+    public turboObj turboObj;
+    public controlesObj controlesObj;
+    public jugador Player;
+    public int powerReset;
 
     private void Start()
     {
@@ -15,7 +22,32 @@ public class obstaculos : MonoBehaviour
 
     private void Update()
     {
-        gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.left * 4f;    
+        gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.left * 4f;
+
+        if (hitCounterCoin == 3)
+        {
+            coinObj.GetComponent<Rigidbody2D>().velocity = Vector2.left * 5f;
+            hitCounterCoin = 0;
+        }
+
+        if(hitCounterPower == 7)
+        {
+            if (Random.Range(-1,1) >= 0)
+            {
+                turboObj.GetComponent<Rigidbody2D>().velocity = Vector2.left * 5f;
+            }
+            else
+            {
+                controlesObj.GetComponent<Rigidbody2D>().velocity = Vector2.left * 5f;
+            }
+            hitCounterPower = 0;
+        }
+
+        if(powerReset == 5)
+        {
+            Time.timeScale = 1f;
+            Player.power = false;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -36,8 +68,20 @@ public class obstaculos : MonoBehaviour
 
         if(collision.gameObject.tag == "Score")
         {
-            scoreInt++;
-            score.text = scoreInt.ToString();
+            if (Time.timeScale == 2f || Player.GetComponent<Rigidbody2D>().gravityScale < 0)
+            {
+                powerReset++;
+                hitCounterCoin++;
+                scoreInt++;
+                score.text = scoreInt.ToString();
+            }
+            else
+            {
+                hitCounterCoin++;
+                hitCounterPower++;
+                scoreInt++;
+                score.text = scoreInt.ToString();
+            }
         }
     }
 }

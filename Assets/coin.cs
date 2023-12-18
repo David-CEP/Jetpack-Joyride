@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class coin : MonoBehaviour
 {
-    private void Start()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.left;
+        if(collision.gameObject.tag == "Respawn")
+        {
+            gameObject.SetActive(false);
+            gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            gameObject.transform.position = new Vector2(10, Random.Range(-4, 4));
+            gameObject.SetActive(true);
+        }
     }
 }

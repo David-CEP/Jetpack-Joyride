@@ -13,6 +13,8 @@ public class jugador : MonoBehaviour
     public bala balaObj;
     public bool movingBullet = false;
     public float monedas = 0;
+    public float velocity = 6f;
+    public bool power = false;
 
     private void Start()
     {
@@ -20,6 +22,7 @@ public class jugador : MonoBehaviour
         scoreObj highScoreCheck = JsonUtility.FromJson<scoreObj>(tempHighScore);
         highScore.text = highScoreCheck.score.ToString();
         coins.text = highScoreCheck.coins.ToString();
+        monedas = int.Parse(coins.text);
     }
 
     void Update()
@@ -31,13 +34,27 @@ public class jugador : MonoBehaviour
             balaObj.GetComponent<Rigidbody2D>().velocity = Vector2.right * 8f;
             movingBullet = true;
         }
-        Move();
+
+        if (!power)
+        {
+            Move();
+        }else
+        {
+            MoveNegative();
+        }
     }
     
     private void Move()
     {
         Vector2 tempPos = gameObject.GetComponent<Rigidbody2D>().velocity;
-        tempPos.y = Input.GetAxis("Jump") * 6f;
+        tempPos.y = Input.GetAxis("Jump") * velocity;
+        gameObject.GetComponent<Rigidbody2D>().velocity = tempPos;
+    }
+
+    private void MoveNegative()
+    {
+        Vector2 tempPos = gameObject.GetComponent<Rigidbody2D>().velocity;
+        tempPos.y = Input.GetAxis("JumpNegative") * velocity;
         gameObject.GetComponent<Rigidbody2D>().velocity = tempPos;
     }
 
@@ -50,7 +67,9 @@ public class jugador : MonoBehaviour
             scoreObj tempScore = new scoreObj();
             tempScore.score = jsonScore.text;
             tempScore.coins = coins.text;
-            if(int.Parse(highScoreCheck.score) < int.Parse(tempScore.score))
+            int puntuacionTemp = int.Parse(tempScore.score);
+            int monedasTemp = int.Parse(tempScore.score);
+            if(int.Parse(highScoreCheck.score) < puntuacionTemp)
             {
                 string score = JsonUtility.ToJson(tempScore, true);
                 File.WriteAllText(Application.dataPath + "/scoreSaver.json", score);
@@ -59,8 +78,43 @@ public class jugador : MonoBehaviour
         }
         if(collision.gameObject.tag == "Coin")
         {
-            Debug.Log(int.Parse(coins.text));
+            monedas++;
+            coins.text = monedas.ToString();
+            string tempHighScore = File.ReadAllText(Application.dataPath + "/scoreSaver.json");
+            scoreObj tempScore = new scoreObj();
+            tempScore.score = jsonScore.text;
+            tempScore.coins = coins.text;
+            string score = JsonUtility.ToJson(tempScore, true);
+            File.WriteAllText(Application.dataPath + "/scoreSaver.json", score);
             collision.gameObject.SetActive(false);
+            collision.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            collision.gameObject.transform.position = new Vector2(10, Random.Range(-4, 4));
+            collision.gameObject.SetActive(true);
+        }
+        if(collision.gameObject.tag == "Turbo")
+        {
+            Time.timeScale = 2f;
+            collision.gameObject.SetActive(false);
+            collision.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            collision.gameObject.transform.position = new Vector2(10, Random.Range(-4, 4));
+            collision.gameObject.SetActive(true);
+        }
+        if(collision.gameObject.tag == "Controles")
+        {
+            power = true;
+            gameObject.GetComponent<Rigidbody2D>().gravityScale *= -1;
+            collision.gameObject.SetActive(false);
+            collision.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            collision.gameObject.transform.position = new Vector2(10, Random.Range(-4, 4));
+            collision.gameObject.SetActive(true);
         }
     }
 }
+
+/*
+powerups:
+iman
+
+powerup negativo:
+inversion controles
+*/

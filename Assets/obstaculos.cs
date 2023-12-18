@@ -47,6 +47,7 @@ public class obstaculos : MonoBehaviour
         {
             Time.timeScale = 1f;
             Player.power = false;
+            Player.GetComponent<Rigidbody2D>().gravityScale = 10;
         }
     }
 
